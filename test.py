@@ -1,4 +1,5 @@
-import pygame, sys
+import pygame
+import sys
 
 pygame.init()
 pygame.display.set_caption("draw triangle without pygame.draw.polygon()")
