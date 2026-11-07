@@ -1,12 +1,12 @@
 import pygame, sys
 from pygame.locals import DOUBLEBUF, OPENGL
-#test
+
 import raycast
 import texture
 from player import Player
 from world import World
 from rendering import Rendering
-from rect3 import *
+from entity import *
 
 WIDTH, HEIGHT = 1000, 1000
 
@@ -26,7 +26,7 @@ texture.load_all_textures()
 
 player = Player()
 world = World()
-entities = []
+entities = [Block(1, 5, 0, 0, 0, 0, "dirt")]
 render = Rendering(WIDTH, HEIGHT)
 render.set_projection(player.camera.fov)
 
@@ -70,6 +70,9 @@ while 1:
 
     player.move(key, screen)
     player.update(world, dt)
+
+    for entity in entities:
+        entity.update(world, dt)
 
     if player.y < -50:
         player.spawn(world, keep_inventory=True)

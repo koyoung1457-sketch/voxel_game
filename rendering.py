@@ -77,6 +77,7 @@ class Rendering:
         for entity in entities:
             for face, face_name in entity.faces:
                 tex_id = texture.get_texture(entity.kind, face_name, entity=True)
+                self._draw_entity_face(cx, cy, cz, yaw, pitch, face, entity.verticals, tex_id)
 
     def _draw_entity_face(self, cx, cy, cz, yaw, pitch, face, verticals, tex_id):
         if tex_id is not None:
@@ -89,6 +90,15 @@ class Rendering:
             glColor3f(r / 255, g / 255, b / 255)
 
         glBegin(GL_QUADS)
+        for (u, vv), i in zip(FACE_UV, face):
+            vx, vy, vz = verticals[i]
+            cxs, cys, czs = math3.world_to_screen(cx, cy, cz,  vx, vy, vz, yaw, pitch)
+
+            if tex_id is not None:
+                glTexCoord2f(u, vv)
+
+            glVertex3f(cxs, cys, -czs)
+        glEnd()
 
     def _draw_face(self, cx, cy, cz, yaw, pitch, x, y, z, idx, tex_id):
         v = [

@@ -67,14 +67,14 @@ class Block:
 
     @property
     def faces(self):
-        return {
+        return [
             [(4, 5, 6, 7), "side"],    # +Z
             [(0, 1, 2, 3), "side"],   # -Z
             [(1, 5, 6, 2), "side"],    # +X
             [(0, 4, 7, 3), "side"],   # -X
             [(3, 2, 6, 7), "top"],     # +Y (윗면)
             [(0, 1, 5, 4), "bottom"] # -Y (아랫면)
-        }
+        ]
 
     @property
     def verticals(self):
