@@ -12,3 +12,8 @@ class World:
 
     def has(self, pos):
         return pos in self.blocks
+
+    def get_kind(self, pos):
+        if self.has(pos):
+            return self.blocks2[pos]
+        return None

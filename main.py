@@ -6,7 +6,8 @@ import texture
 from player import Player
 from world import World
 from rendering import Rendering
-from entity import *
+from rect3 import *
+import entity as Entity
 
 WIDTH, HEIGHT = 1000, 1000
 
@@ -26,7 +27,7 @@ texture.load_all_textures()
 
 player = Player()
 world = World()
-entities = [Block(1, 5, 0, 0, 0, 0, "dirt")]
+entities = []
 render = Rendering(WIDTH, HEIGHT)
 render.set_projection(player.camera.fov)
 
@@ -55,6 +56,7 @@ while 1:
 
             if hit is not None:
                 if event.button == 1:  # 마우스 왼쪽 클릭: 파괴
+                    entities.append(Entity.Block(hit[0], hit[1], hit[2], 0, 0, 0, world.get_kind(hit)))
                     world.remove(hit)
 
                 elif event.button == 3:  # 마우스 오른쪽 클릭: 설치
@@ -73,6 +75,13 @@ while 1:
 
     for entity in entities:
         entity.update(world, dt)
+        if (entity.x-player.x)**2+(entity.y-player.y)**2+(entity.z-player.z)**2 < 1:
+            entities.remove(entity)
+
+            continue
+        if entity.y  <-50:
+            entities.remove(entity)
+            continue
 
     if player.y < -50:
         player.spawn(world, keep_inventory=True)

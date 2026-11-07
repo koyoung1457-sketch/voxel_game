@@ -3,7 +3,7 @@ from rect3 import *
 
 class Block:
     def __init__(self, x, y, z, fx, fy, fz, kind):
-        self.rect = EntityRect(x, y, z, 0.4, 0.4, 0.4)
+        self.rect = EntityRect(x-0.2, y-0.2, z-0.2, 0.4, 0.4, 0.4)
         self.vx = fx
         self.vy = fy
         self.vz = fz
@@ -91,12 +91,12 @@ class Block:
 
     @property
     def x(self):
-        return self.rect.x
+        return self.rect.x+0.2
 
     @property
     def y(self):
-        return self.rect.y
+        return self.rect.y+0.2
 
     @property
     def z(self):
-        return self.rect.z
+        return self.rect.z+0.2
