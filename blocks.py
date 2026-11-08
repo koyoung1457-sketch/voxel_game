@@ -45,3 +45,18 @@ ENTITY_TEXTURES = {
         "bottom": OAK_LOG_TOP
     }
 }
+
+ITEM_TEXTURE = {
+    "dirt": {
+        DIRT
+    },
+    "grass": {
+        GRASS_SIDE
+    },
+    "stone": {
+        STONE
+    },
+    "oak_log": {
+        OAK_LOG_TOP
+    }
+}

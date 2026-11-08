@@ -8,6 +8,7 @@ from world import World
 from rendering import Rendering
 from rect3 import *
 import entity as Entity
+from UI import UI
 
 WIDTH, HEIGHT = 1000, 1000
 
@@ -30,6 +31,7 @@ world = World()
 entities = []
 render = Rendering(WIDTH, HEIGHT)
 render.set_projection(player.camera.fov)
+ui = UI(WIDTH, HEIGHT)
 
 clock = pygame.time.Clock()
 
@@ -95,6 +97,8 @@ while 1:
     if hover_hit is not None:
         render.draw_block_wireframe(player.cx, player.cy, player.cz, player.camera.yaw, player.camera.pitch, hover_hit)
 
-    render.draw_crosshair()
+
+    ui.update()
+    render.draw_surface(ui.draw(player.inventory, player.inventory_idx, player.hp))
 
     pygame.display.flip()

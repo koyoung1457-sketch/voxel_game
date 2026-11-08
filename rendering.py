@@ -1,4 +1,4 @@
-import math
+import math, pygame
 from OpenGL.GL import *
 from OpenGL.GLU import gluPerspective
 
@@ -191,3 +191,71 @@ class Rendering:
         glMatrixMode(GL_PROJECTION)
         glPopMatrix()
         glMatrixMode(GL_MODELVIEW)
+
+    def draw_surface(self, surface):
+        # Surface를 OpenGL 텍스처로 변환
+        width, height = surface.get_size()
+        image_data = pygame.image.tostring(surface, "RGBA", True)
+
+        # UI 텍스처를 임시로 생성
+        tex_id = glGenTextures(1)
+        glBindTexture(GL_TEXTURE_2D, tex_id)
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+
+        glTexImage2D(
+            GL_TEXTURE_2D, 0, GL_RGBA,
+            width, height, 0,
+            GL_RGBA, GL_UNSIGNED_BYTE, image_data
+        )
+
+        # 2D 좌표계로 전환
+        glMatrixMode(GL_PROJECTION)
+        glPushMatrix()
+        glLoadIdentity()
+        glOrtho(0, self.width, self.height, 0, -1, 1)
+
+        glMatrixMode(GL_MODELVIEW)
+        glPushMatrix()
+        glLoadIdentity()
+
+        # 투명도 적용
+        glEnable(GL_TEXTURE_2D)
+        glEnable(GL_BLEND)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+        glDisable(GL_DEPTH_TEST)
+
+        glColor4f(1, 1, 1, 1)
+
+        # 화면 전체에 UI 출력
+        glBegin(GL_QUADS)
+
+        glTexCoord2f(0, 1)
+        glVertex2f(0, 0)
+
+        glTexCoord2f(1, 1)
+        glVertex2f(width, 0)
+
+        glTexCoord2f(1, 0)
+        glVertex2f(width, height)
+
+        glTexCoord2f(0, 0)
+        glVertex2f(0, height)
+
+        glEnd()
+
+        # OpenGL 상태 복구
+        glDisable(GL_BLEND)
+        glDisable(GL_TEXTURE_2D)
+        glEnable(GL_DEPTH_TEST)
+
+        glPopMatrix()
+
+        glMatrixMode(GL_PROJECTION)
+        glPopMatrix()
+
+        glMatrixMode(GL_MODELVIEW)
+
+        # 임시 텍스처 삭제
+        glDeleteTextures([tex_id])
