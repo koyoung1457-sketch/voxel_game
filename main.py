@@ -63,7 +63,7 @@ while 1:
 
                 elif event.button == 3:  # 마우스 오른쪽 클릭: 설치
                     if not world.has(place):
-                        if player.inventory[player.inventory_idx] is not None:
+                        if player.inventory[player.inventory_idx].kind is not None:
                             world.add(place, player.now_block)
                             if player.rect.colliderect(block_rect(place)):
                                 world.remove(place)
@@ -78,6 +78,9 @@ while 1:
     for entity in entities:
         entity.update(world, dt)
         if (entity.x-player.x)**2+(entity.y-player.y)**2+(entity.z-player.z)**2 < 1:
+            has = player.has_item(entity.kind)
+            if has is not None:
+                player.get_item(entity.kind, has)
             entities.remove(entity)
 
             continue

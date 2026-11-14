@@ -47,16 +47,8 @@ ENTITY_TEXTURES = {
 }
 
 ITEM_TEXTURE = {
-    "dirt": {
-        DIRT
-    },
-    "grass": {
-        GRASS_SIDE
-    },
-    "stone": {
-        STONE
-    },
-    "oak_log": {
-        OAK_LOG_TOP
-    }
+    "dirt": DIRT,
+    "grass": GRASS_SIDE,
+    "stone": STONE,
+    "oak_log": OAK_LOG_TOP
 }

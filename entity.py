@@ -100,3 +100,13 @@ class Block:
     @property
     def z(self):
         return self.rect.z+0.2
+
+class Item:
+    def __init__(self, kind, count):
+        self.kind = kind
+        self.count = count
+    def discount(self, count):
+        self.count -= count
+        if self.count <= 0:
+            self.count = 0
+            self.kind = None

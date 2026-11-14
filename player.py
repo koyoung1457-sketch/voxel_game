@@ -2,6 +2,7 @@ import pygame
 import math
 from camera import Camera
 from rect3 import *
+import entity
 
 class Player:
     def __init__(self, spawn_pos = (0, 0, 0)):
@@ -18,7 +19,17 @@ class Player:
 
         self.camera = Camera()
 
-        self.inventory = [['dirt', float("inf")], ['grass', float('inf')], ['stone', float('inf')], ['oak_log', float('inf')], None, None, None, None, None]
+        self.inventory = [
+            entity.Item('dirt', 5),
+            entity.Item('grass', 5),
+            entity.Item('stone', 5),
+            entity.Item('oak_log', 5),
+            entity.Item(None, 0),
+            entity.Item(None, 0),
+            entity.Item(None, 0),
+            entity.Item(None, 0),
+            entity.Item(None, 0),
+            ]
         self.inventory_idx = 0
 
         self.spawn_pos = spawn_pos
@@ -196,11 +207,27 @@ class Player:
             self.inventory = [None] * 9
     @property
     def now_block(self):
-        return self.inventory[self.inventory_idx][0]
+        return self.inventory[self.inventory_idx].kind
 
     def discount(self):
-        if self.inventory[self.inventory_idx] is not None:
-            self.inventory[self.inventory_idx][1] -= 1
+        if self.inventory[self.inventory_idx].kind is not None:
+            self.inventory[self.inventory_idx].discount(1)
+
+    def has_item(self, kind):
+        for i in range(9):
+            if self.inventory[i].kind == kind:
+                return i
+        return None
+
+    def get_item(self, kind, idx):
+        if idx is not None:
+            self.inventory[idx].count += 1
+        else:
+            for i in range(9):
+                if self.inventory[i].kind is None:
+                    self.inventory[i].kind = kind
+                    self.inventory[i].count += 1
+
     @property
     def cx(self):
         return self.x

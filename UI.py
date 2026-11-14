@@ -1,4 +1,5 @@
 import pygame
+import texture
 
 class UI:
     def __init__(self, width, height):
@@ -6,6 +7,7 @@ class UI:
             (width, height),
             pygame.SRCALPHA
         )
+        self.fnt = pygame.font.SysFont(None, 50)
 
     def update(self):
         pass
@@ -35,6 +37,19 @@ class UI:
                  self.width * 1 / 10, self.height / 10),
                 5
             )
+            if inventory[i].kind is not None:
+                self.surface.blit(
+                    texture.get_item_texture(inventory[i].kind),
+                    (self.width * (2 * i + 1) / 20+10, self.height * 17 / 20+10))
+                count = self.fnt.render(str(inventory[i].count), True, (255, 255, 255))
+
+                self.surface.blit(
+                    count,
+                    (
+                        self.width * (2 * i + 1) / 20 + self.width / 10 - count.width - 5,
+                        self.height * 17 / 20 + self.height / 10 - count.height - 5
+                    )
+                )
 
         pygame.draw.rect(
             self.surface,

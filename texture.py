@@ -18,6 +18,7 @@ DEFAULT_TEXTURE_PATH = "textures/missing.png"
 # face는 "top" / "bottom" / "side" / "all" 중 하나입니다.
 _texture_block_cache = {}
 _texture_entity_cache = {}
+_item_cache = {}
 
 # 누락 텍스처(위 DEFAULT_TEXTURE_PATH 또는 자동 생성 체크무늬)의 텍스처 id.
 # load_all_textures()가 호출되기 전까지는 None입니다.
@@ -63,6 +64,8 @@ def _load_gl_texture(path):
     surface = pygame.image.load(path).convert_alpha()
     return _surface_to_gl_texture(surface)
 
+def _load_pg_texture(path, size=(80, 80)):
+    return pygame.transform.scale(pygame.image.load(path).convert_alpha(), size)
 
 def _load_default_texture():
     global _default_texture_id
@@ -100,6 +103,11 @@ def load_all_textures():
                 continue
 
             _texture_entity_cache[(kind, face_key)] = _load_gl_texture(path)
+    for kind, path in blocks.ITEM_TEXTURE.items():
+        if not os.path.exists(path):
+            print(f"[texture] 아이템 이미지가 없어서 누락 텍스처로 대체합니다: {kind} -> {path}")
+            continue
+        _item_cache[kind] = _load_pg_texture(path)
 
 
 def get_texture(kind, face, entity=False):
@@ -129,3 +137,6 @@ def get_texture(kind, face, entity=False):
             return _texture_entity_cache[(kind, "all")]
 
         return _default_texture_id
+
+def get_item_texture(kind):
+    return _item_cache[kind]

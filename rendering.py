@@ -165,32 +165,6 @@ class Rendering:
                 glVertex3f(cxs, cys, -czs)
         glEnd()
 
-    def draw_crosshair(self):
-        # 3D 장면 위에 2D 십자선을 그리기 위해 잠깐 직교 투영으로 전환합니다.
-        glMatrixMode(GL_PROJECTION)
-        glPushMatrix()
-        glLoadIdentity()
-        glOrtho(0, self.width, self.height, 0, -1, 1)
-
-        glMatrixMode(GL_MODELVIEW)
-        glPushMatrix()
-        glLoadIdentity()
-
-        glDisable(GL_TEXTURE_2D)
-        glDisable(GL_DEPTH_TEST)
-        glColor3f(0, 0, 0)
-        glBegin(GL_LINES)
-        glVertex2f(self.width / 2 - 10, self.height / 2)
-        glVertex2f(self.width / 2 + 10, self.height / 2)
-        glVertex2f(self.width / 2, self.height / 2 - 10)
-        glVertex2f(self.width / 2, self.height / 2 + 10)
-        glEnd()
-        glEnable(GL_DEPTH_TEST)
-
-        glPopMatrix()
-        glMatrixMode(GL_PROJECTION)
-        glPopMatrix()
-        glMatrixMode(GL_MODELVIEW)
 
     def draw_surface(self, surface):
         # Surface를 OpenGL 텍스처로 변환
