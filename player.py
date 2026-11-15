@@ -172,13 +172,29 @@ class Player:
                         self.vy = 0
 
     def _collides(self, world, x, y, z):
-        """(x, y, z)에 플레이어를 놓았을 때 블록과 겹치는지 검사"""
-        r = self.rect
-        for bx in range(math.floor(x - r.width / 2 - 0.5) + 1, math.ceil(x + r.width / 2 + 0.5)):
-            for by in range(math.floor(y - 0.5) + 1, math.ceil(y + r.height + 0.5)):
-                for bz in range(math.floor(z - r.depth / 2 - 0.5) + 1, math.ceil(z + r.depth / 2 + 0.5)):
-                    if world.has((bx, by, bz)):
-                        return True
+        test = EntityRect(
+            x, y, z,
+            self.rect.width,
+            self.rect.height,
+            self.rect.depth
+        )
+
+        for block in world.blocks:
+            if test.colliderect(block_rect(block)):
+                return True
+
+        return False
+
+    def _has_ground(self, world, x, y, z):
+        feet = EntityRect(
+            x, y - 0.05, z,
+            self.rect.width, 0.1, self.rect.depth
+        )
+
+        for block in world.blocks:
+            if feet.colliderect(block_rect(block)):
+                return True
+
         return False
 
     def find_free_spawn(self, world, radius=8, step=0.5):
@@ -195,16 +211,20 @@ class Player:
         offsets.sort(key=lambda o: (o[0] ** 2 + o[1] ** 2 + o[2] ** 2, -o[1]))
 
         for ox, oy, oz in offsets:
-            if not self._collides(world, sx + ox, sy + oy, sz + oz):
-                return (sx + ox, sy + oy, sz + oz)
+            if (
+                    not self._collides(world, sx + ox, sy + oy, sz + oz)
+                    and self._has_ground(world, sx + ox, sy + oy, sz + oz)
+            ):
+                return sx + ox, sy + oy, sz + oz
 
+        print("주변에서 빈 공간을 찾지 못함!")
         return self.spawn_pos  # 반경 안에 빈 곳이 없으면 그냥 원래 위치
 
     def spawn(self, world, keep_inventory=False):
         self.rect.pos = self.find_free_spawn(world)
         self.vx = self.vy = self.vz = 0
         if not keep_inventory:
-            self.inventory = [None] * 9
+            self.inventory = [entity.Item(None, 0)] * 9
     @property
     def now_block(self):
         return self.inventory[self.inventory_idx].kind
@@ -222,11 +242,14 @@ class Player:
     def get_item(self, kind, idx):
         if idx is not None:
             self.inventory[idx].count += 1
+            return True
         else:
             for i in range(9):
                 if self.inventory[i].kind is None:
                     self.inventory[i].kind = kind
                     self.inventory[i].count += 1
+                    return True
+            return False
 
     @property
     def cx(self):
