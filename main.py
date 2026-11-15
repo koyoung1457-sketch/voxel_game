@@ -1,3 +1,4 @@
+#https://drive.google.com/drive/folders/1F2cAMhvpaIxljQxVqn1ASc5JZA8FIVu1?usp=sharing
 import pygame, sys
 from pygame.locals import DOUBLEBUF, OPENGL
 
@@ -37,6 +38,8 @@ clock = pygame.time.Clock()
 
 for i in range(5):
     for j in range(5):
+        world.add((i - 2, 0, j - 2), 'dirt')
+        world.add((i - 2, 0, j - 2), 'dirt')
         world.add((i - 2, 0, j - 2), 'dirt')
 
 player.spawn(world, keep_inventory= True)
@@ -79,9 +82,9 @@ while 1:
         entity.update(world, dt)
         if (entity.x-player.x)**2+(entity.y-player.y)**2+(entity.z-player.z)**2 < 1:
             has = player.has_item(entity.kind)
-            if has is not None:
-                player.get_item(entity.kind, has)
-            entities.remove(entity)
+            ntt_kill = player.get_item(entity.kind, has)
+            if ntt_kill:
+                entities.remove(entity)
 
             continue
         if entity.y  <-50:

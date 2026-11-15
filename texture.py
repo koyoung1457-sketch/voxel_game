@@ -8,7 +8,15 @@ from OpenGL.GL import (
 )
 
 import blocks
+import sys
 
+def resource_path(path):
+    if hasattr(sys, '_MEIPASS'):
+        base_path = sys._MEIPASS
+    else:
+        base_path = os.path.dirname(os.path.abspath(__file__))
+
+    return os.path.join(base_path, path)
 # 텍스처 파일이 없는 블록/면에 대신 씌울 "누락 텍스처" 이미지 경로.
 # 이 경로에 파일을 직접 만들어 두면 그 이미지가 쓰이고,
 # 없으면 아래 _generate_missing_surface()가 자동으로 체크무늬를 그려서 대신 씁니다.
@@ -61,17 +69,17 @@ def _surface_to_gl_texture(surface):
 
 def _load_gl_texture(path):
     """이미지 파일 경로를 읽어서 OpenGL 텍스처로 등록합니다."""
-    surface = pygame.image.load(path).convert_alpha()
+    surface = pygame.image.load(resource_path(path)).convert_alpha()
     return _surface_to_gl_texture(surface)
 
 def _load_pg_texture(path, size=(80, 80)):
-    return pygame.transform.scale(pygame.image.load(path).convert_alpha(), size)
+    return pygame.transform.scale(pygame.image.load(resource_path(path)).convert_alpha(), size)
 
 def _load_default_texture():
     global _default_texture_id
 
-    if os.path.exists(DEFAULT_TEXTURE_PATH):
-        surface = pygame.image.load(DEFAULT_TEXTURE_PATH).convert_alpha()
+    if os.path.exists(resource_path(DEFAULT_TEXTURE_PATH)):
+        surface = pygame.image.load(resource_path(DEFAULT_TEXTURE_PATH)).convert_alpha()
     else:
         surface = _generate_missing_surface()
 
@@ -91,20 +99,20 @@ def load_all_textures():
 
     for kind, faces in blocks.BLOCK_TEXTURES.items():
         for face_key, path in faces.items():
-            if not os.path.exists(path):
+            if not os.path.exists(resource_path(path)):
                 print(f"[texture] 이미지가 없어서 누락 텍스처로 대체합니다: {kind}/{face_key} -> {path}")
                 continue
 
             _texture_block_cache[(kind, face_key)] = _load_gl_texture(path)
     for kind, faces in blocks.ENTITY_TEXTURES.items():
         for face_key, path in faces.items():
-            if not os.path.exists(path):
+            if not os.path.exists(resource_path(path)):
                 print(f"[texture] 이미지가 없어서 누락 텍스처로 대체합니다: {kind}/{face_key} -> {path}")
                 continue
 
             _texture_entity_cache[(kind, face_key)] = _load_gl_texture(path)
     for kind, path in blocks.ITEM_TEXTURE.items():
-        if not os.path.exists(path):
+        if not os.path.exists(resource_path(path)):
             print(f"[texture] 아이템 이미지가 없어서 누락 텍스처로 대체합니다: {kind} -> {path}")
             continue
         _item_cache[kind] = _load_pg_texture(path)
