@@ -1,4 +1,3 @@
-#https://drive.google.com/drive/folders/1F2cAMhvpaIxljQxVqn1ASc5JZA8FIVu1?usp=sharing
 import pygame, sys
 from pygame.locals import DOUBLEBUF, OPENGL
 
