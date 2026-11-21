@@ -1,3 +1,9 @@
+# Python cache
 __pycache__/
 *.py[cod]
+
+# PyCharm
+.idea/
+
+# Windows
 desktop.ini
