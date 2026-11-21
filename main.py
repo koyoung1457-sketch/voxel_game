@@ -37,9 +37,9 @@ clock = pygame.time.Clock()
 
 for i in range(5):
     for j in range(5):
+        world.add((i - 2, 0, j - 2), 'stone')
         world.add((i - 2, 0, j - 2), 'dirt')
-        world.add((i - 2, 0, j - 2), 'dirt')
-        world.add((i - 2, 0, j - 2), 'dirt')
+        world.add((i - 2, 0, j - 2), 'grass')
 
 player.spawn(world, keep_inventory= True)
 
