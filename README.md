@@ -2,6 +2,8 @@
 
 A 3D voxel game inspired by Minecraft, developed using Python, Pygame-CE, and OpenGL.
 
+EXE file is in the [Here](https://drive.google.com/drive/folders/1F2cAMhvpaIxljQxVqn1ASc5JZA8FIVu1?usp=sharing)
+
 This project was created purely for learning and experimentation. It is a personal project and is not intended for commercial distribution.
 
 ## Screenshots
