@@ -33,7 +33,6 @@ entities = []
 render = Rendering(WIDTH, HEIGHT)
 render.set_projection(player.camera.fov)
 ui = UI(WIDTH, HEIGHT)
-
 clock = pygame.time.Clock()
 
 for i in range(5):
