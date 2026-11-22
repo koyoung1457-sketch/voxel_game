@@ -1,5 +1,28 @@
 import math
+import numpy as np
 
+def look_at(origin, target):
+    d = target - origin
+    dx, dy, dz = d
+    yaw = math.atan2(dx, dz)
+    pitch = math.atan2(dy, math.hypot(dx, dz))
+
+    return yaw, pitch
+
+def rotation_matrix(yaw, pitch):
+    y, p = yaw, pitch
+    ry = np.array([
+        [np.cos(y), 0, -np.sin(y)],
+        [0, 1, 0],
+        [np.sin(y), 0, np.cos(y)]
+    ])
+    rx = np.array([
+        [1, 0, 0],
+        [0, np.cos(p), -np.sin(p)],
+        [0, np.sin(p), np.cos(p)]
+    ])
+
+    return rx @ ry
 def project(x, y, z, fov, width, height):
     if z <= 0:
         return None, None
@@ -12,25 +35,9 @@ def project(x, y, z, fov, width, height):
     return screen_x, screen_y
 
 def world_to_screen(cx, cy, cz, x,  y, z, yaw, pitch):
-    x -= cx
-    y -= cy
-    z -= cz
+    pos = np.array([x-cx, y-cy, z-cz])
 
-    nx = x * math.cos(yaw) - z * math.sin(yaw)
-    nz = x * math.sin(yaw) + z * math.cos(yaw)
-    x, z = nx, nz
+    R = rotation_matrix(yaw, pitch)
+    pos = R @ pos
 
-    ny = y*math.cos(pitch) - z*math.sin(pitch)
-    nz = y*math.sin(pitch) + z*math.cos(pitch)
-    y, z = ny, nz
-
-    return x, y, z
-
-def barycentric(x, y, ax, ay, bx, by, cx, cy):
-    den = (by-cy)*(ax-cx) + (cx-bx)*(ay-cy)
-
-    alpha = ((by-cy)*(x-cx) + (cx-bx)*(y-cy)) / den
-    beta  = ((cy-ay)*(x-cx) + (ax-cx)*(y-cy)) / den
-    gamma = 1 - alpha - beta
-
-    return alpha, beta, gamma
+    return tuple(pos)

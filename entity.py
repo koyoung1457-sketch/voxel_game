@@ -9,8 +9,7 @@ class Block:
         self.vz = fz
         self.kind = kind
         self.on_ground = False
-        self.gravity = 25
-    def update(self, world, dt):
+    def update(self, world, dt, gravity):
         steps = math.ceil(dt / 0.01)
         dt /= steps
 
@@ -45,7 +44,7 @@ class Block:
                         self.rect.z = rect.back + self.rect.depth / 2
 
             # ---------------- Y축 ----------------
-            self.vy -= self.gravity * dt
+            self.vy -= gravity * dt
 
             self.rect.y += self.vy * dt
 

@@ -8,6 +8,7 @@ from world import World
 from rendering import Rendering
 from rect3 import *
 import entity as Entity
+import mob
 from UI import UI
 
 WIDTH, HEIGHT = 1000, 1000
@@ -26,9 +27,12 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT), DOUBLEBUF | OPENGL)
 # OpenGL 컨텍스트(창)가 생긴 '뒤에' 텍스처를 불러와야 합니다.
 texture.load_all_textures()
 
+gravity = 25
+
 player = Player()
 world = World()
 entities = []
+mobs = []
 render = Rendering(WIDTH, HEIGHT)
 render.set_projection(player.camera.fov)
 ui = UI(WIDTH, HEIGHT)
@@ -37,8 +41,8 @@ clock = pygame.time.Clock()
 for i in range(5):
     for j in range(5):
         world.add((i - 2, 0, j - 2), 'stone')
-        world.add((i - 2, 0, j - 2), 'dirt')
-        world.add((i - 2, 0, j - 2), 'grass')
+        world.add((i - 2, 1, j - 2), 'dirt')
+        world.add((i - 2, 2, j - 2), 'grass')
 
 player.spawn(world, keep_inventory= True)
 
@@ -74,10 +78,10 @@ while 1:
     key = pygame.key.get_pressed()
 
     player.move(key, screen)
-    player.update(world, dt)
+    player.update(world, dt, gravity)
 
     for entity in entities:
-        entity.update(world, dt)
+        entity.update(world, dt, gravity)
         if (entity.x-player.x)**2+(entity.y-player.y)**2+(entity.z-player.z)**2 < 1:
             has = player.has_item(entity.kind)
             ntt_kill = player.get_item(entity.kind, has)

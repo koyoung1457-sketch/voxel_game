@@ -1,3 +1,5 @@
+import numpy as np
+
 class BlockRect:
     def __init__(self, x, y, z, width, height, depth):
         self.x = x
@@ -46,7 +48,7 @@ class BlockRect:
 
     @property
     def pos(self):
-        return self.x, self.y, self.z
+        return np.array([self.x, self.y, self.z])
 
     @pos.setter
     def pos(self, other):
@@ -101,7 +103,7 @@ class EntityRect:
 
     @property
     def pos(self):
-        return self.x, self.y, self.z
+        return np.array([self.x, self.y, self.z])
 
     @pos.setter
     def pos(self, other):

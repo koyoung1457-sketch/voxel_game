@@ -13,7 +13,6 @@ class Player:
         self.vy = 0
         self.vz = 0
 
-        self.gravity = 25
         self.jump_speed = 8
         self.on_ground = False
 
@@ -112,7 +111,7 @@ class Player:
         if key[pygame.K_9]:
             self.inventory_idx = 8
 
-    def update(self, world, dt):
+    def update(self, world, dt, gravity):
         steps = math.ceil(dt / 0.01)
         dt /= steps
 
@@ -147,7 +146,7 @@ class Player:
                         self.rect.z = rect.back + self.rect.depth / 2
 
             # ---------------- Y축 ----------------
-            self.vy -= self.gravity * dt
+            self.vy -= gravity * dt
 
             self.rect.y += self.vy * dt
 
@@ -274,3 +273,7 @@ class Player:
     @property
     def z(self):
         return self.rect.z
+
+    @property
+    def pos(self):
+        return np.array([self.x, self.y, self.z])
