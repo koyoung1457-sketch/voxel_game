@@ -83,3 +83,20 @@ class Follower:
     def jump(self):
         if self.on_ground:
             self.dy = self.jump_speed
+
+    @property
+    def _local_face(self):
+        return np.array([
+            ( 0.5,  0.5,  0.5),
+            ( 0.5,  0.5, -0.5),
+            ( 0.5, -0.5,  0.5),
+            ( 0.5, -0.5, -0.5),
+            (-0.5,  0.5,  0.5),
+            (-0.5,  0.5, -0.5),
+            (-0.5, -0.5,  0.5),
+            (-0.5, -0.5, -0.5),
+        ])
+
+    @property
+    def face(self):
+        return self._local_face + self.rect.pos
