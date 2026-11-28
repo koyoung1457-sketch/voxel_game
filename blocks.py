@@ -52,3 +52,14 @@ ITEM_TEXTURE = {
     "stone": STONE,
     "oak_log": OAK_LOG_TOP
 }
+
+MOB_TEXTURES = {
+    "follower": {
+        "front" : "textures/mob/follower/front.png",
+        "back"  : "textures/mob/follower/back.png",
+        "right" : "textures/mob/follower/right.png",
+        "left"  : "textures/mob/follower/left.png",
+        "top"   : "textures/mob/follower/top.png",
+        "bottom": "textures/mob/follower/bottom.png",
+    }
+}

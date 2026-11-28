@@ -61,7 +61,7 @@ class Rendering:
     def begin_frame(self):
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
-    def painters_algorithm(self, cx, cy, cz, yaw, pitch, world, entities):
+    def painters_algorithm(self, cx, cy, cz, yaw, pitch, world, entities, mobs):
         # 이름은 기존 코드와 맞춰뒀지만, 실제 앞/뒤 정렬은
         # glEnable(GL_DEPTH_TEST)로 GPU의 Z-buffer가 처리합니다.
         for x, y, z in world.blocks:
@@ -79,7 +79,33 @@ class Rendering:
                 tex_id = texture.get_texture(entity.kind, face_name, entity=True)
                 self._draw_entity_face(cx, cy, cz, yaw, pitch, face, entity.verticals, tex_id)
 
+        for mob in mobs:
+            for face, face_name in mob.faces:
+                tex_id = texture.get_texture(mob.kind, face_name, mob=True)
+                self._draw_mob_face(cx, cy, cz, yaw, pitch, face, mob.verticals, tex_id)
+
     def _draw_entity_face(self, cx, cy, cz, yaw, pitch, face, verticals, tex_id):
+        if tex_id is not None:
+            glEnable(GL_TEXTURE_2D)
+            glBindTexture(GL_TEXTURE_2D, tex_id)
+            glColor3f(1.0, 1.0, 1.0)  # 텍스처 원래 색 그대로 나오게
+        else:
+            glDisable(GL_TEXTURE_2D)
+            r, g, b = FALLBACK_COLOR
+            glColor3f(r / 255, g / 255, b / 255)
+
+        glBegin(GL_QUADS)
+        for (u, vv), i in zip(FACE_UV, face):
+            vx, vy, vz = verticals[i]
+            cxs, cys, czs = math3.world_to_screen(cx, cy, cz,  vx, vy, vz, yaw, pitch)
+
+            if tex_id is not None:
+                glTexCoord2f(u, vv)
+
+            glVertex3f(cxs, cys, -czs)
+        glEnd()
+
+    def _draw_mob_face(self, cx, cy, cz, yaw, pitch, face, verticals, tex_id):
         if tex_id is not None:
             glEnable(GL_TEXTURE_2D)
             glBindTexture(GL_TEXTURE_2D, tex_id)

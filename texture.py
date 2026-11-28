@@ -26,6 +26,7 @@ DEFAULT_TEXTURE_PATH = "textures/missing.png"
 # face는 "top" / "bottom" / "side" / "all" 중 하나입니다.
 _texture_block_cache = {}
 _texture_entity_cache = {}
+_texture_mob_cache = {}
 _item_cache = {}
 
 # 누락 텍스처(위 DEFAULT_TEXTURE_PATH 또는 자동 생성 체크무늬)의 텍스처 id.
@@ -109,6 +110,11 @@ def load_all_textures():
             if not os.path.exists(resource_path(path)):
                 print(f"[texture] 이미지가 없어서 누락 텍스처로 대체합니다: {kind}/{face_key} -> {path}")
                 continue
+    for kind, faces in blocks.MOB_TEXTURES.items():
+        for face_key, path in faces.items():
+            if not os.path.exists(resource_path(path)):
+                print(f"[texture] 이미지가 없어서 누락 텍스처로 대체합니다: {kind}/{face_key} -> {path}")
+                continue
 
             _texture_entity_cache[(kind, face_key)] = _load_gl_texture(path)
     for kind, path in blocks.ITEM_TEXTURE.items():
@@ -118,7 +124,7 @@ def load_all_textures():
         _item_cache[kind] = _load_pg_texture(path)
 
 
-def get_texture(kind, face, entity=False):
+def get_texture(kind, face, entity=False, mob=False):
     """
     kind: 블록 종류 문자열 (Block.kind / world.blocks2에 들어있는 값과 동일)
     face: "top" | "bottom" | "side"
@@ -130,13 +136,22 @@ def get_texture(kind, face, entity=False):
       DEFAULT_TEXTURE_PATH(또는 자동 생성된 체크무늬) 텍스처 id를 돌려줍니다.
     """
     if not entity:
-        if (kind, face) in _texture_block_cache:
-            return _texture_block_cache[(kind, face)]
+        if not mob:
+            if (kind, face) in _texture_block_cache:
+                return _texture_block_cache[(kind, face)]
 
-        if (kind, "all") in _texture_block_cache:
-            return _texture_block_cache[(kind, "all")]
+            if (kind, "all") in _texture_block_cache:
+                return _texture_block_cache[(kind, "all")]
 
-        return _default_texture_id
+            return _default_texture_id
+        else:
+            if (kind, face) in _texture_mob_cache:
+                return _texture_mob_cache[(kind, face)]
+
+            if (kind, "all") in _texture_mob_cache:
+                return _texture_mob_cache[(kind, "all")]
+
+            return _default_texture_id
     else:
         if (kind, face) in _texture_entity_cache:
             return _texture_entity_cache[(kind, face)]

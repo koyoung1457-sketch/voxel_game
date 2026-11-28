@@ -12,6 +12,7 @@ class Follower:
         self.on_ground = False
         self.dx, self.dy, self.dz = 0, 0, 0
         self.find = False
+        self.kind = "follower"
 
     def move(self, player):
         if np.linalg.norm((self.rect.pos-player.pos)[[0, 2]]) < 5:
@@ -85,18 +86,29 @@ class Follower:
             self.dy = self.jump_speed
 
     @property
-    def _local_face(self):
+    def _local_vertical(self):
         return np.array([
-            ( 0.5,  0.5,  0.5),
-            ( 0.5,  0.5, -0.5),
-            ( 0.5, -0.5,  0.5),
-            ( 0.5, -0.5, -0.5),
-            (-0.5,  0.5,  0.5),
-            (-0.5,  0.5, -0.5),
-            (-0.5, -0.5,  0.5),
-            (-0.5, -0.5, -0.5),
+            (-0.2, -0.2, -0.2),  # 0
+            (+0.2, -0.2, -0.2),  # 1
+            (+0.2, +0.2, -0.2),  # 2
+            (-0.2, +0.2, -0.2),  # 3
+            (-0.2, -0.2, +0.2),  # 4
+            (+0.2, -0.2, +0.2),  # 5
+            (+0.2, +0.2, +0.2),  # 6
+            (-0.2, +0.2, +0.2),  # 7
         ])
 
     @property
-    def face(self):
-        return self._local_face + self.rect.pos
+    def verticals(self):
+        return self._local_vertical + math3.rotation_matrix(self.yaw, self.pitch) @ self.rect.pos
+    
+    @property
+    def faces(self):
+        return [
+            [(4, 5, 6, 7), "back"],  # +Z
+            [(0, 1, 2, 3), "front"],  # -Z
+            [(1, 5, 6, 2), "right"],  # +X
+            [(0, 4, 7, 3), "left"],  # -X
+            [(3, 2, 6, 7), "top"],  # +Y (윗면)
+            [(0, 1, 5, 4), "bottom"]  # -Y (아랫면)
+        ]

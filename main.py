@@ -8,7 +8,7 @@ from world import World
 from rendering import Rendering
 from rect3 import *
 import entity as Entity
-import mob
+import mob as Mob
 from UI import UI
 
 WIDTH, HEIGHT = 1000, 1000
@@ -32,17 +32,15 @@ gravity = 25
 player = Player()
 world = World()
 entities = []
-mobs = []
+mobs = [Mob.Follower(6, 6, 1)]
 render = Rendering(WIDTH, HEIGHT)
 render.set_projection(player.camera.fov)
 ui = UI(WIDTH, HEIGHT)
 clock = pygame.time.Clock()
 
-for i in range(5):
-    for j in range(5):
-        world.add((i - 2, 0, j - 2), 'stone')
-        world.add((i - 2, 1, j - 2), 'dirt')
-        world.add((i - 2, 2, j - 2), 'grass')
+for i in range(7):
+    for j in range(7):
+        world.add((i, 0, j), 'grass')
 
 player.spawn(world, keep_inventory= True)
 
@@ -93,6 +91,12 @@ while 1:
             entities.remove(entity)
             continue
 
+    for mob in mobs:
+        mob.update(world, dt, gravity)
+        if mob.rect.y  <-50:
+            mobs.remove(mob)
+            continue
+
     if player.y < -50:
         player.spawn(world, keep_inventory=True)
 
@@ -100,7 +104,7 @@ while 1:
     hover_hit, _ = raycast.raycast(player.cx, player.cy, player.cz, player.camera.yaw, player.camera.pitch, world, max_dist=10.0)
 
     render.begin_frame()
-    render.painters_algorithm(player.cx, player.cy, player.cz, player.camera.yaw, player.camera.pitch, world, entities)
+    render.painters_algorithm(player.cx, player.cy, player.cz, player.camera.yaw, player.camera.pitch, world, entities, mobs)
 
     if hover_hit is not None:
         render.draw_block_wireframe(player.cx, player.cy, player.cz, player.camera.yaw, player.camera.pitch, hover_hit)
